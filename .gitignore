@@ -1,0 +1,8 @@
+node_modules
+Data
+Old Screenshots
+Screenshots
+*.pdf
+*.zip
+*.docx
+.vscode

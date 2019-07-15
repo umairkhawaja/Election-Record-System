@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+
+<script type="text/javascript">
+	const Person = 'CNIC,Fname,Lname,DOB,Gender,Address,PhoneNum,City,Province';
+	const Admin = 'a_id,CNIC';
+	const Constituency = 'City_Division,City,Province';
+	const National = 'Code,City_Div';
+	const N_Candidate = 'Cand_id,CNIC,N_code,Party_id,Year';
+	const Parties = 'party_id,Pname,Symbol,Agenda,Num_Candidates';
+	const Registered_Voters = 'Voter_id,CNIC,Prov_id,N_code,Year';
+	const P_Candidate = 'Cand_id,CNIC,Party_id,Const_id';
+	const Provincial = 'Const_id,Assembly,Code,City_Div';
+	const Votes_Casted_Provincial = 'CNIC,Prov_id,Cand_id,Year';
+	const Votes_Casted_National = 'CNIC,N_code,Cand_id,Year';
+
+	const tables = {
+	    'Person': Person.split(','),
+	    'Admin': Admin.split(','),
+	    'Constituency': Constituency.split(','),
+	    'National': National.split(','),
+	    'N_Candidate': N_Candidate.split(','),
+	    'Parties': Parties.split(','),
+	    'Registered_Voters': Registered_Voters.split(','),
+	    'P_Candidate': P_Candidate.split(','),
+	    'Provincial': Provincial.split(','),
+	    'Votes_Casted_Provincial': Votes_Casted_Provincial.split(','),
+	    'Votes_Casted_National': Votes_Casted_National.split(','),
+	}
+
+
+	nameprevious = ""
+	function submited(val){
+		// console.log(val)
+		if(val == 1) makeForm("Person")
+		else if(val == 2) makeForm("Admin")
+		else if(val == 3) makeForm("Constituency")
+ 		else if(val == 4) makeForm("National")
+ 		else if(val == 5) makeForm("N_Candidate")
+ 		else if(val == 6) makeForm("Parties")
+ 		else if(val == 7) makeForm("Registered_Voters")
+ 		else if(val == 8) makeForm("P_Candidate")
+ 		else if(val == 9) makeForm("Provincial")
+ 		else if(val == 10) makeForm("Votes_Casted_Provincial")
+ 		else if(val == 11) makeForm("Votes_Casted_National")
+	}
+
+	
+	// function reload(){
+	// 	location.reload()
+	// }
+	function validateForm(tableName){
+		mytable = tableName.value
+		if(mytable == "Person"){
+			var x = document.forms[mytable]["CNIC"].value;
+		    if (x == "" || x.length != 13 || isNaN(x)) {
+		        alert("Error in CNIC");
+		        return false;
+		    }
+
+		    var y = document.forms[mytable]["Fname"].value;
+		    if (y == "" || y.length > 45 ) {
+		        alert("Error in Fname");
+		        return false;
+		    }
+
+		    var z = document.forms[mytable]["Lname"].value;
+		    if (z == "" || z.length > 45 ) {
+		        alert("Error in Lname");
+		        return false;
+		    }
+
+		    var a = document.forms[mytable]["DOB"].value;
+		    if (a.length != 10 || a.charAt(4) != '-' || a.charAt(7) != '-') {
+		        alert("Error in DOB. Should be YYYY-MM-DD");
+		        return false;
+		    }
+
+		    var b = document.forms[mytable]["Gender"].value;
+		    if (b != "") {
+		    	if( b != "Male" && b != "Female"){    		
+			        alert("Error in Gender. Enter Male or Female.");
+			        return false;
+		    	}
+		    }else{
+		    	alert("Error in Gender. Please Enter Male or Female.");
+		        return false;
+		    }
+
+			var c = document.forms[mytable]["Address"].value;
+		    if (c == "" || c.length > 60 ) {
+		        alert("Error in Address");
+		        return false;
+		    }
+
+			var d = document.forms[mytable]["PhoneNum"].value;
+		    if (d == "" || d.length != 11 || isNaN(d)) {
+		        alert("Error in PhoneNum");
+		        return false;
+		    }
+
+		    var e = document.forms[mytable]["City"].value;
+		    if (e == "" || e.length > 20 ) {
+		        alert("Error in City");
+		        return false;
+		    }
+
+		    var g = document.forms[mytable]["Province"].value;
+		    if (g != "") {
+		    	if( g != "Punjab" && g != "Sindh" && g != "Balochistan" && g != "KPK" && g != "Gilgit Baltistan"){    		
+			        alert("Error in Province. Enter Punjab,Sindh,Balochistan,KPK,Gilgit Baltistan");
+			        return false;
+		    	}
+		    }else{
+		    	alert("Error in Province. Please Enter Punjab,Sindh,Balochistan,KPK,Gilgit Baltistan");
+			        return false;
+		    }
+		}else if (mytable == "Admin"){
+			var aa = document.forms[mytable]["a_id"].value;
+		    if (aa == "" || aa.length > 11 || isNaN(aa)) {
+		        alert("Error in Admin ID (a_id)");
+		        return false;
+		    }
+		    var ab = document.forms[mytable]["CNIC"].value;
+		    if (ab != "") {
+		    	if(ab.length != 13 || isNaN(ab)){
+			        alert("Error in CNIC");
+			        return false;
+		    	}
+		    }
+		}
+		else if(mytable == "Constituency"){
+
+			var be = document.forms[mytable]["City_Division"].value;
+		    if (be == "" || be.length > 30 ) {
+		        alert("Error in City_Division");
+		        return false;
+		    }
+
+			var ae = document.forms[mytable]["City"].value;
+		    if (ae != "" ){
+		    	if(ae.length > 20){
+			        alert("Error in City");
+			        return false;
+		    	}
+		    }
+
+			var ag = document.forms[mytable]["Province"].value;
+		    if (ag != "") {
+		    	if( ag != "Punjab" && ag != "Sindh" && ag != "Balochistan" && ag != "KPK" && ag != "Gilgit Baltistan"){    		
+			        alert("Error in Province. Enter Punjab,Sindh,Balochistan,KPK,Gilgit Baltistan");
+			        return false;
+		    	}
+		    }
+		}
+		else if(mytable == "National"){
+			var ee = document.forms[mytable]["Code"].value;
+		    if (ee == "" || ee.length > 11 || isNaN(ee)) {
+		        alert("Error in Code");
+		        return false;
+		    }
+
+		    var ae2 = document.forms[mytable]["City_Div"].value;
+		    if (ae2 != "" ){
+		    	if(ae2.length > 30){
+			        alert("Error in City_Div");
+			        return false;
+		    	}
+		    }
+		}
+		else if(mytable == "N_Candidate"){
+			var ee2 = document.forms[mytable]["Cand_id"].value;
+		    if (ee2 == "" || ee2.length > 11 || isNaN(ee2)) {
+		        alert("Error in Cand_id");
+		        return false;
+		    }
+			var ae3 = document.forms[mytable]["CNIC"].value;
+		    if (ae3 != "" ){
+		    	if(ae3.length != 13 || isNaN(ae3)){
+			        alert("Error in CNIC");
+			        return false;
+		    	}
+		    }
+		    var ae4 = document.forms[mytable]["N_code"].value;
+		    if (ae4 != "" ){
+		    	if(ae4.length > 11){
+			        alert("Error in N_code" || isNaN(ae4));
+			        return false;
+		    	}
+		    }
+
+		    var ae5 = document.forms[mytable]["Party_id"].value;
+		    if (ae5 != "" ){
+		    	if(ae5.length > 11 || isNaN(ae5)){
+			        alert("Error in Party_id");
+			        return false;
+		    	}
+		    }
+
+		    var ae4 = document.forms[mytable]["Year"].value;
+		    if (ae5 != "" ){
+		    	if(ae5.length != 4 || isNaN(ae5)){
+			        alert("Error in Year");
+			        return false;
+		    	}
+		    }
+		}
+		else if(mytable == "Parties"){
+			// alert(mytable)
+			var a112 = document.forms[mytable]["party_id"].value;
+		    if (a112 == "" || a112.length > 11 || isNaN(a112)) {
+		        alert("Error in Party_id");
+		        return false;
+		    }
+
+		    var a22 = document.forms[mytable]["Pname"].value;
+		    if (a22 == "" || a22.length > 45 ) {
+		        alert("Error in Pname");
+		        return false;
+		    }
+
+		    var a33 = document.forms[mytable]["Num_Candidates"].value;
+		    if (a33 == "" || a33.length > 11 || isNaN(a33)) {
+		        alert("Error in Cand_id");
+		        return false;
+		    }
+			var a1 = document.forms[mytable]["Symbol"].value;
+		    if (a1 != "" ){
+		    	if(a1.length > 15){
+			        alert("Error in Symbol");
+			        return false;
+		    	}
+		    }
+		}
+		else if(mytable == "Registered_Voters"){
+			var a331 = document.forms[mytable]["Voter_id"].value;
+		    if (a331 == "" || a331.length > 11 || isNaN(a331)) {
+		        alert("Error in Voter_id");
+		        return false;
+		    }
+		    var x1 = document.forms[mytable]["CNIC"].value;
+		    if (x1 != "" ){
+		    	if(x1.length != 13 || isNaN(x1)){
+			        alert("Error in CNIC");
+			        return false;
+		    	}
+		    }
+		    var y1 = document.forms[mytable]["Prov_id"].value;
+		    if (y1 != "" ){
+		    	if(y1.length > 11 || isNaN(y1)){
+			        alert("Error in Prov_id");
+			        return false;
+		    	}
+		    }
+		    var zz1 = document.forms[mytable]["N_code"].value;
+		    if (zz1 != "" ){
+		    	if(zz1.length > 11 || isNaN(zz1)){
+			        alert("Error in N_code");
+			        return false;
+		    	}
+		    }
+		    var as1 = document.forms[mytable]["Symbol"].value;
+		    if (as1 != "" ){
+		    	if(as1.length > 45){
+			        alert("Error in Symbol");
+			        return false;
+		    	}
+		    }
+
+		    var aee4 = document.forms[mytable]["Year"].value;
+		    if (aee4 != "" ){
+		    	if(aee4.length != 4 || isNaN(aee4)){
+			        alert("Error in Year");
+			        return false;
+		    	}
+		    }
+		    
+		}
+		else if(mytable == "P_Candidate"){
+			var v1 = document.forms[mytable]["Cand_id"].value;
+		    if (v1 == "" || v1.length > 11 || isNaN(v1)) {
+		        alert("Error in Cand_id");
+		        return false;
+		    }
+		    var xx1 = document.forms[mytable]["CNIC"].value;
+		    if (xx1 != "" ){
+		    	if(xx1.length != 13 || isNaN(xx1)){
+			        alert("Error in CNIC");
+			        return false;
+		    	}
+		    }
+		    var xxx1 = document.forms[mytable]["Party_id"].value;
+		    if (xxx1 != "" ){
+		    	if(xxx1.length > 11 || isNaN(xxx1)){
+			        alert("Error in Party_id");
+			        return false;
+		    	}
+		    }
+		    var q1 = document.forms[mytable]["Const_id"].value;
+		    if (q1 != "" ){
+		    	if(q1.length > 11 || isNaN(q1)){
+			        alert("Error in Const_id");
+			        return false;
+		    	}
+		    }
+
+		}
+		else if(mytable == "Provincial"){
+			var v2 = document.forms[mytable]["Const_id"].value;
+		    if (v2 == "" || v2.length > 11 || isNaN(v2)) {
+		        alert("Error in Const_id");
+		        return false;
+		    }
+		    var qq1 = document.forms[mytable]["Assembly"].value;
+		    if (qq1 != "" ){
+		    	if(qq1.length != 2){
+			        alert("Error in Assembly");
+			        return false;
+		    	}
+		    }
+
+		    var qz1 = document.forms[mytable]["Code"].value;
+		    if (qz1 != "" ){
+		    	if(qz1.length > 11 || isNaN(qz1)){
+			        alert("Error in Code");
+			        return false;
+		    	}
+		    }
+
+		    var rq1 = document.forms[mytable]["City_Div"].value;
+		    if (rq1 != "" ){
+		    	if(rq1.length > 30){
+			        alert("Error in City_Div");
+			        return false;
+		    	}
+		    }
+		}
+		else if(mytable == "Votes_Casted_Provincial"){
+			var vvv2 = document.forms[mytable]["CNIC"].value;
+		    if (vvv2 == "" || vvv2.length != 13 || isNaN(vvv2)) {
+		        alert("Error in CNIC");
+		        return false;
+		    }
+		    var qq11 = document.forms[mytable]["Prov_id"].value;
+		    if (qq11 != "" ){
+		    	if(qq11.length > 11 || isNaN(qq11)){
+			        alert("Error in Prov_id");
+			        return false;
+		    	}
+		    }
+		    var qq12 = document.forms[mytable]["Cand_id"].value;
+		    if (qq12 != "" ){
+		    	if(qq12.length > 11 || isNaN(qq12)){
+			        alert("Error in Cand_id");
+			        return false;
+		    	}
+		    }
+
+		    var l4 = document.forms[mytable]["Year"].value;
+		    if (l4 != "" ){
+		    	if(l4.length != 4 || isNaN(l4)){
+			        alert("Error in Year");
+			        return false;
+		    	}
+		    }
+
+		}
+		else if(mytable == "Votes_Casted_National"){
+			var vvvv2 = document.forms[mytable]["CNIC"].value;
+		    if (vvvv2 == "" || vvvv2.length != 13 || isNaN(vvvv2)) {
+		        alert("Error in CNIC");
+		        return false;
+		    }
+		    var qqv11 = document.forms[mytable]["N_code"].value;
+		    if (qqv11 != "" ){
+		    	if(qqv11.length > 11 || isNaN(qqv11)){
+			        alert("Error in N_code");
+			        return false;
+		    	}
+		    }
+		    var qqv12 = document.forms[mytable]["Cand_id"].value;
+		    if (qqv12 != "" ){
+		    	if(qqv12.length > 11 || isNaN(qqv12)){
+			        alert("Error in Cand_id");
+			        return false;
+		    	}
+		    }
+
+		    var l4v = document.forms[mytable]["Year"].value;
+		    if (l4v != "" ){
+		    	if(l4v.length != 4 || isNaN(l4v)){
+			        alert("Error in Year");
+			        return false;
+		    	}
+		    }
+		}
+	}
+
+	function makeForm(tableName){
+			// if(nameprevious != "" && nameprevious != tableName){
+				var element = document.getElementById(nameprevious);
+				if(element){
+					// element.innerHTML = '';		
+					if(element.parentNode){
+						    element.parentNode.removeChild(element);
+					}
+				}
+		var attrList = tables[tableName];
+		var f = document.createElement("form");
+		f.id = tableName
+		f.setAttribute('method',"post");
+		f.setAttribute('action',"/insert");
+		f.setAttribute('onsubmit', "return validateForm("+tableName+")")
+
+		for(var attr in attrList){
+			br = document.createElement("br")
+			br2 = document.createElement("br")
+			f.appendChild(br);
+
+			// para = document.createElement("p")
+			var node = document.createTextNode(attrList[attr] + ":\t" );
+			f.appendChild(node);
+			// para.value = attrList[attr]
+			// f.appendChild(para)
+
+			var i = document.createElement("input");
+
+			i.type = "text";
+
+			i.name = attrList[attr];
+			// i.value = attrList[attr];
+			i.id = attr;
+
+			// valtruth = attr
+
+			f.appendChild(i);
+			f.appendChild(br2);
+			// var element = document.getElementById(attrList[attr]);
+			// element.parentNode.removeChild(element);
+
+
+		}
+		nameprevious = tableName
+		var s = document.createElement("input");
+		s.type = "submit";
+		s.value = "Submit";
+		var table = document.createElement("input");
+		table.type = "hidden";
+		table.name = "tableName";
+		table.id = tableName;
+		table.value = tableName;
+		f.appendChild(table);
+		// s.onclick = "reload()";
+		f.appendChild(s);
+		document.getElementsByTagName('body')[0].appendChild(f); 
+	}
+</script>
+
+
+	<body>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-1">
+					<button class="btn-lg btn-round" onclick="window.location.href = '../home.html'">Back</button>
+				</div>
+				<div class="col-sm-11"></div>
+			</div>
+			<div class="row">
+				<div class="col-md-4"></div>				
+				<div class="col-md-4">
+					<h1 style="margin-left:25%">Insert</h1>
+					<h3>Select table to insert into</h3>
+				</div>
+				<div class="col-md-4"></div>				
+			</div>
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+					<div class="row">
+						<div class="col-md-4">
+							<a onclick="submited(1)" class="tile purple">
+							<h3 class="title">Person</h3>
+							</a>
+						</div>
+						<div class="col-md-4">
+							<a onclick="submited(2)" class="tile blue">
+							<h3 class="title">Admin</h3>
+							</a>
+						</div>
+						<div class="col-md-4">
+							<a onclick="submited(3)" class="tile red">
+							<h3 class="title">Constituency</h3>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+					<div class="row">
+						<div class="col-md-4">
+							<a onclick="submited(4)" class="tile purple">
+							<h3 class="title">National</h3>
+							</a>
+						</div>
+						<div class="col-md-4">
+							<a onclick="submited(5)" class="tile blue">
+							<h3 class="title">N_Candidate</h3>
+							</a>
+						</div>
+						<div class="col-md-4">
+							<a onclick="submited(6)" class="tile red">
+							<h3 class="title">Parties</h3>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+					<div class="row">
+						<div class="col-md-4">
+							<a onclick="submited(7)" class="tile purple">
+							<h3 class="title">Registered Voters</h3>
+							</a>
+						</div>
+						<div class="col-md-4">
+							<a onclick="submited(8)" class="tile blue">
+							<h3 class="title">P_Candidate</h3>
+							</a>
+						</div>
+						<div class="col-md-4">
+							<a onclick="submited(9)" class="tile red">
+							<h3 class="title">Provincial</h3>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+					<div class="row">
+						<div class="col-md-6">
+							<a onclick="submited(11)" class="tile purple">
+							<h3 class="title">Votes Casted National</h3>
+							</a>
+						</div>
+						<div class="col-md-6">
+							<a onclick="submited(10)" class="tile blue">
+							<h3 class="title">Votes Casted Provincial</h3>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+		</div>
+	</body>
+</html>

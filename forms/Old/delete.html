@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<script type="text/javascript">
+	const Person = 'CNIC';
+	const Admin = 'a_id';
+	const Constituency = 'City_Division';
+	const National = 'Code';
+	const N_Candidate = 'CNIC';
+	const Parties = 'party_id';
+	const Registered_Voters = 'CNIC';
+	const P_Candidate = 'CNIC';
+	const Provincial = 'Const_id';
+	const Votes_Casted_Provincial = 'CNIC';
+	const Votes_Casted_National = 'CNIC';
+	
+	let nameprevious = ""
+	
+	const tables = {
+	    'Person': Person.split(','),
+	    'Admin': Admin.split(','),
+	    'Constituency': Constituency.split(','),
+	    'National': National.split(','),
+	    'N_Candidate': N_Candidate.split(','),
+	    'Parties': Parties.split(','),
+	    'Registered_Voters': Registered_Voters.split(','),
+	    'P_Candidate': P_Candidate.split(','),
+	    'Provincial': Provincial.split(','),
+	    'Votes_Casted_Provincial': Votes_Casted_Provincial.split(','),
+	    'Votes_Casted_National': Votes_Casted_National.split(','),
+	}
+	function validateForm(tableName){
+		mytable = tableName.value
+		if(mytable == "Person"){
+			var x = document.forms[mytable]["CNIC"].value;
+		    if (x == "" || x.length != 13 || isNaN(x)) {
+		        alert("Error in CNIC "+ x);
+		        return false;
+		    }
+		}else if(mytable == "Admin"){
+			var aa = document.forms[mytable]["a_id"].value;
+		    if (aa == "" || aa.length != 11 || isNaN(aa)) {
+		        alert("Error in Admin ID (a_id)");
+		        return false;
+		    }
+		}else if(mytable == "Constituency"){
+			var be = document.forms[mytable]["City_Division"].value;
+		    if (be == "" || be.length > 30 ) {
+		        alert("Error in City_Division");
+		        return false;
+		    }
+		}else if(mytable == "National"){
+			var ee = document.forms[mytable]["Code"].value;
+		    if (ee == "" || ee.length != 11 || isNaN(ee)) {
+		        alert("Error in Code");
+		        return false;
+		    }
+		}else if(mytable == "N_Candidate"){
+			var ee2 = document.forms[mytable]["CNIC"].value;
+		    if (ee2 == "" || ee2.length != 13 || isNaN(ee2)) {
+		        alert("Error in CNIC");
+		        return false;
+		    }
+		}else if(mytable == "Parties"){
+			var a112 = document.forms[mytable]["party_id"].value;
+		    if (a112 == "" || a112.length != 11 || isNaN(a112)) {
+		        alert("Error in Party_id");
+		        return false;
+		    }
+		}else if(mytable == "Registered_Voters"){
+			var ee22 = document.forms[mytable]["CNIC"].value;
+		    if (ee22 == "" || ee22.length != 13 || isNaN(ee22)) {
+		        alert("Error in CNIC");
+		        return false;
+		    }
+		}else if(mytable == "P_Candidate"){
+			var eew2 = document.forms[mytable]["CNIC"].value;
+		    if (eew2 == "" || eew2.length != 13 || isNaN(eew2)) {
+		        alert("Error in CNIC");
+		        return false;
+		    }
+		}else if(mytable == "Provincial"){
+			var v2 = document.forms[mytable]["Const_id"].value;
+		    if (v2 == "" || v2.length != 11 || isNaN(v2)) {
+		        alert("Error in Const_id");
+		        return false;
+		    }
+		}else if(mytable == "Votes_Casted_National"){
+			var eew22 = document.forms[mytable]["CNIC"].value;
+		    if (eew22 == "" || eew22.length != 13 || isNaN(eew22)) {
+		        alert("Error in CNIC");
+		        return false;
+		    }
+		}else if(mytable == "Votes_Casted_Provincial"){
+			var eew2q = document.forms[mytable]["CNIC"].value;
+		    if (eew2q == "" || eew2q.length != 13 || isNaN(eew2q)) {
+		        alert("Error in CNIC");
+		        return false;
+		    }
+		}
+	}
+	function submited(val){
+		if(val == 1) makeForm("Person")
+		else if(val == 2) makeForm("Admin")
+		else if(val == 3) makeForm("Constituency")
+ 		else if(val == 4) makeForm("National")
+ 		else if(val == 5) makeForm("N_Candidate")
+ 		else if(val == 6) makeForm("Parties")
+ 		else if(val == 7) makeForm("Registered_Voters")
+ 		else if(val == 8) makeForm("P_Candidate")
+ 		else if(val == 9) makeForm("Provincial")
+ 		else if(val == 10) makeForm("Votes_Casted_Provincial")
+ 		else if(val == 11) makeForm("Votes_Casted_National")
+	}
+
+	function makeForm(tableName){
+		var element = document.getElementById(nameprevious);
+		if(element){
+			if(element.parentNode){
+					element.parentNode.removeChild(element);
+			}
+		}
+		var attrList = tables[tableName];
+		var f = document.createElement("form");
+		f.id = tableName
+		f.setAttribute('method',"post");
+		f.setAttribute('action',"/delete");
+		f.setAttribute('onsubmit', "return validateForm("+tableName+")");
+		for(attr in attrList){
+			br = document.createElement("br")
+			br2 = document.createElement("br")
+			f.appendChild(br);
+			var text = document.createTextNode("Entrer PK:\n");
+			f.appendChild(text);
+
+			var node = document.createTextNode(attrList[attr] + ":\t" );
+			f.appendChild(node);
+
+			var i = document.createElement("input");
+			i.type = "text";
+			i.name = "id";
+			i.id = attr;
+
+			f.appendChild(i);
+			f.appendChild(br2);
+		}
+			nameprevious = tableName
+		
+		var s = document.createElement("input");
+		s.type = "submit";
+		s.value = "Submit";
+		
+		var table = document.createElement("input");
+		table.type = "hidden";
+		table.name = "tableName";
+		table.id = tableName;
+		table.value = tableName;
+
+		var attr = document.createElement("input");
+		attr.type = "hidden";
+		attr.name = "attr";
+		attr.id = attr;
+		attr.value = attrList[0];
+		
+		f.appendChild(table);
+		f.appendChild(s);
+		f.appendChild(attr);
+		document.getElementsByTagName('body')[0].appendChild(f); 
+	}
+</script>
+<body>
+
+	<h3>DELETE</h3>
+
+	<select onchange="submited(this.selectedIndex)">
+		<option value="default">Please Select Option</option>
+		<option value="Person" >Person</option>
+		<option value="Admin" >Admin</option>
+		<option value="Constituency" >Constituency</option>
+		<option value="National" >National</option>
+		<option value="N_Candidate" >N_Candidate</option>
+		<option value="Parties" >Parties</option>
+		<option value="Registered_Voters" >Registered_Voters</option>
+		<option value="P_Candidate" >P_Candidate</option>
+		<option value="Provincial" >Provincial</option>
+		<option value="Votes_Casted_Provincial" >Votes_Casted_Provincial</option>
+		<option value="Votes_Casted_National" >Votes_Casted_National</option>
+	</select>
+
+
+</body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	</style>
+</head>
+<script type="text/javascript">
+	const Person = 'CNIC';
+	const Admin = 'a_id';
+	const Constituency = 'City_Division';
+	const National = 'Code';
+	const N_Candidate = 'CNIC';
+	const Parties = 'party_id';
+	const Registered_Voters = 'CNIC';
+	const P_Candidate = 'CNIC';
+	const Provincial = 'Const_id';
+	const Votes_Casted_Provincial = 'CNIC';
+	const Votes_Casted_National = 'CNIC';
+	
+	let nameprevious = ""
+	
+	const tables = {
+	    'Person': Person.split(','),
+	    'Admin': Admin.split(','),
+	    'Constituency': Constituency.split(','),
+	    'National': National.split(','),
+	    'N_Candidate': N_Candidate.split(','),
+	    'Parties': Parties.split(','),
+	    'Registered_Voters': Registered_Voters.split(','),
+	    'P_Candidate': P_Candidate.split(','),
+	    'Provincial': Provincial.split(','),
+	    'Votes_Casted_Provincial': Votes_Casted_Provincial.split(','),
+	    'Votes_Casted_National': Votes_Casted_National.split(','),
+	}
+	function validateForm(tableName){
+		mytable = tableName.value
+		if(mytable == "Person"){
+			var x = document.forms[mytable]["id"].value;
+			// console.log(x);
+		    if (x == "" || x.length != 13 || isNaN(x)) {
+		        alert("Error in CNIC");
+		        return false;
+		    }
+		}else if(mytable == "Admin"){
+			var aa = document.forms[mytable]["id"].value;
+		    if (aa == "" || aa.length > 11 || isNaN(aa)) {
+		        alert("Error in Admin ID (a_id)");
+		        return false;
+		    }
+		}else if(mytable == "Constituency"){
+			var be = document.forms[mytable]["id"].value;
+		    if (be == "" || be.length > 30 ) {
+		        alert("Error in City_Division");
+		        return false;
+		    }
+		}else if(mytable == "National"){
+			var ee = document.forms[mytable]["id"].value;
+		    if (ee == "" || ee.length > 11 || isNaN(ee)) {
+		        alert("Error in Code");
+		        return false;
+		    }
+		}else if(mytable == "N_Candidate"){
+			var ee2 = document.forms[mytable]["id"].value;
+		    if (ee2 == "" || ee2.length != 13 || isNaN(ee2)) {
+		        alert("Error in CNIC");
+		        return false;
+		    }
+		}else if(mytable == "Parties"){
+			var a112 = document.forms[mytable]["id"].value;
+		    if (a112 == "" || a112.length > 11 || isNaN(a112)) {
+		        alert("Error in Party_id");
+		        return false;
+		    }
+		}else if(mytable == "Registered_Voters"){
+			var ee22 = document.forms[mytable]["id"].value;
+		    if (ee22 == "" || ee22.length != 13 || isNaN(ee22)) {
+		        alert("Error in CNIC");
+		        return false;
+		    }
+		}else if(mytable == "P_Candidate"){
+			var eew2 = document.forms[mytable]["id"].value;
+		    if (eew2 == "" || eew2.length != 13 || isNaN(eew2)) {
+		        alert("Error in CNIC");
+		        return false;
+		    }
+		}else if(mytable == "Provincial"){
+			var v2 = document.forms[mytable]["id"].value;
+		    if (v2 == "" || v2.length > 11 || isNaN(v2)) {
+		        alert("Error in Const_id");
+		        return false;
+		    }
+		}else if(mytable == "Votes_Casted_National"){
+			var eew22 = document.forms[mytable]["id"].value;
+		    if (eew22 == "" || eew22.length != 13 || isNaN(eew22)) {
+		        alert("Error in CNIC");
+		        return false;
+		    }
+		}else if(mytable == "Votes_Casted_Provincial"){
+			var eew2q = document.forms[mytable]["id"].value;
+		    if (eew2q == "" || eew2q.length != 13 || isNaN(eew2q)) {
+		        alert("Error in CNIC");
+		        return false;
+		    }
+		}
+	}
+	function submited(val){
+		if(val == 1) makeForm("Person")
+		else if(val == 2) makeForm("Admin")
+		else if(val == 3) makeForm("Constituency")
+ 		else if(val == 4) makeForm("National")
+ 		else if(val == 5) makeForm("N_Candidate")
+ 		else if(val == 6) makeForm("Parties")
+ 		else if(val == 7) makeForm("Registered_Voters")
+ 		else if(val == 8) makeForm("P_Candidate")
+ 		else if(val == 9) makeForm("Provincial")
+ 		else if(val == 10) makeForm("Votes_Casted_Provincial")
+ 		else if(val == 11) makeForm("Votes_Casted_National")
+	}
+
+	function makeForm(tableName){
+		var element = document.getElementById(nameprevious);
+		if(element){
+			if(element.parentNode){
+					element.parentNode.removeChild(element);
+			}
+		}
+		var attrList = tables[tableName];
+		var f = document.createElement("form");
+		f.id = tableName
+		f.setAttribute('method',"post");
+		f.setAttribute('action',"/delete");
+		f.setAttribute('onsubmit', `return validateForm(${tableName})`);
+		for(attr in attrList){
+			br = document.createElement("br")
+			br2 = document.createElement("br")
+			f.appendChild(br);
+			var text = document.createTextNode("Entrer PK:\n");
+			f.appendChild(text);
+
+			var node = document.createTextNode(attrList[attr] + ":\t" );
+			f.appendChild(node);
+
+			var i = document.createElement("input");
+			i.type = "text";
+			i.name = "id";
+			i.id = attr;
+
+			f.appendChild(i);
+			f.appendChild(br2);
+		}
+			nameprevious = tableName
+		
+		var s = document.createElement("input");
+		s.type = "submit";
+		s.value = "Submit";
+		
+		var table = document.createElement("input");
+		table.type = "hidden";
+		table.name = "tableName";
+		table.id = tableName;
+		table.value = tableName;
+
+		var attr = document.createElement("input");
+		attr.type = "hidden";
+		attr.name = "attr";
+		attr.id = attr;
+		attr.value = attrList[0];
+		
+		f.appendChild(table);
+		f.appendChild(s);
+		f.appendChild(attr);
+		document.getElementsByTagName('body')[0].appendChild(f); 
+	}
+</script>
+<body>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-1">
+					<button class="btn-lg btn-round" onclick="window.location.href = '../home.html'">Back</button>
+				</div>
+				<div class="col-sm-11"></div>
+			</div>
+			<div class="row">
+				<div class="col-md-4"></div>				
+				<div class="col-md-4">
+					<h1 style="margin-left:25%">Delete</h1>
+					<h3>Select table to delete from</h3>
+				</div>
+				<div class="col-md-4"></div>				
+			</div>
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+					<div class="row">
+						<div class="col-md-4">
+							<a onclick="submited(1)" class="tile purple">
+							<h3 class="title">Person</h3>
+							</a>
+						</div>
+						<div class="col-md-4">
+							<a onclick="submited(2)" class="tile blue">
+							<h3 class="title">Admin</h3>
+							</a>
+						</div>
+						<div class="col-md-4">
+							<a onclick="submited(3)" class="tile red">
+							<h3 class="title">Constituency</h3>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+					<div class="row">
+						<div class="col-md-4">
+							<a onclick="submited(4)" class="tile purple">
+							<h3 class="title">National</h3>
+							</a>
+						</div>
+						<div class="col-md-4">
+							<a onclick="submited(5)" class="tile blue">
+							<h3 class="title">N_Candidate</h3>
+							</a>
+						</div>
+						<div class="col-md-4">
+							<a onclick="submited(6)" class="tile red">
+							<h3 class="title">Parties</h3>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+					<div class="row">
+						<div class="col-md-4">
+							<a onclick="submited(7)" class="tile purple">
+							<h3 class="title">Registered Voters</h3>
+							</a>
+						</div>
+						<div class="col-md-4">
+							<a onclick="submited(8)" class="tile blue">
+							<h3 class="title">P_Candidate</h3>
+							</a>
+						</div>
+						<div class="col-md-4">
+							<a onclick="submited(9)" class="tile red">
+							<h3 class="title">Provincial</h3>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+					<div class="row">
+						<div class="col-md-6">
+							<a onclick="submited(11)" class="tile purple">
+							<h3 class="title">Votes Casted National</h3>
+							</a>
+						</div>
+						<div class="col-md-6">
+							<a onclick="submited(10)" class="tile blue">
+							<h3 class="title">Votes Casted Provincial</h3>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+		</div>
+	</body>
+</html>

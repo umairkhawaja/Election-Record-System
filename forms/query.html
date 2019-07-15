@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<script type="text/javascript">
+
+	const tables = {
+		'q1' : 'Year',
+		'q2' : 'CNIC',
+		'q3' : 'Year',
+		'q4' : 'Year',
+		'q5' : ['Party_id','Year'],
+	}
+
+	nameprevious = ''
+	function submited(val){
+		// console.log(val)
+		
+		if(val == 1) makeForm("q1")
+		else if(val == 2) makeForm("q2")
+		else if(val == 3) makeForm("q3")
+ 		else if(val == 4) makeForm("q4")
+ 		else if(val == 5) makeForm("q5")
+ 		else if(val == 6) makeForm("q6")
+ 		else if(val == 7) makeForm("q7")
+ 		else if(val == 8) makeForm("q8")
+ 		else if(val == 9) makeForm("q9")
+ 		else if(val == 10) makeForm("q10")
+	}
+
+	function queryImplement(val){
+		var element = document.getElementById(nameprevious);
+		if(element){	
+			if(element.parentNode){
+				    element.parentNode.removeChild(element);
+			}
+		}
+		console.log("Implementing query " + val)
+	}
+
+	function validateForm(val){
+        myval = val.name;
+		if(myval == "q1"){
+            var l4v = document.forms[myval]["par"].value;
+	    	if(l4v == "" || l4v.length != 4 || isNaN(l4v)){
+		        alert("Error in Year");
+		        return false;
+	    	}
+		}else if(myval == "q2"){
+			var vvvv2 = document.forms[myval]["par"].value;
+		    if (vvvv2 == "" || vvvv2.length != 13 || isNaN(vvvv2)) {
+		        alert("Error in CNIC");
+		        return false;
+		    }
+		}else if(myval == "q3"){
+			var l4v = document.forms[myval]["par"].value;
+	    	if(l4v == "" || l4v.length != 4 || isNaN(l4v)){
+		        alert("Error in Year");
+		        return false;
+	    	}
+		}else if(myval == "q4"){
+			var l4v = document.forms[myval]["par"].value;
+	    	if(l4v == "" || l4v.length != 4 || isNaN(l4v)){
+		        alert("Error in Year");
+		        return false;
+	    	}
+		}else if(myval == "q5"){
+			var ae5 = document.forms[myval]["par0"].value;
+			var ae6 = document.forms[myval]["par1"].value;
+	    	if(ae5 == "" || ae5.length > 11 || isNaN(ae5)){
+		        alert("Error in Party_id");
+		        return false;
+	    	}
+	    	if(ae6 == "" || ae6.length != 4 || isNaN(ae6)){
+		        alert("Error in Year");
+		        return false;
+	    	}
+		}
+			return true;
+	}
+	function getQuery(qNum){
+		if(qNum == "q1"){
+			return `SELECT 
+    MAX(Total_Votes) Total_Votes,
+    PartyID,
+    pname AS Party_name,
+    Year
+FROM
+    (SELECT 
+        p.Party_id AS PartyID,
+            SUM(combined_votes.Count) AS Total_Votes,
+            p.pname,
+            Year
+    FROM
+        (SELECT 
+        a.Cand_id AS Cand_ID,
+            a.CNIC as Candidate_CNIC,
+            COUNT(a.Cand_id) AS Count,
+            a.Party_id,
+            b.Year AS Year
+    FROM
+        N_Candidate AS a
+    INNER JOIN Votes_Casted_National AS b ON a.Cand_id = b.Cand_id
+    WHERE
+        b.Year = 'par'
+    GROUP BY a.Cand_id UNION SELECT 
+        c.Cand_id AS Cand_ID,
+            c.CNIC as Candidate_CNIC,
+            COUNT(c.Cand_id) AS Count,
+            c.Party_id,
+            d.Year AS Year
+    FROM
+        P_Candidate AS c
+    INNER JOIN Votes_Casted_Provincial AS d ON c.Cand_id = d.Cand_id
+    WHERE
+        d.Year = 'par'
+    GROUP BY c.Cand_id) AS combined_votes
+    INNER JOIN Parties AS p ON combined_votes.Party_id = p.Party_id
+    GROUP BY p.Party_id) AS sum_votes;`;
+		}
+		else if(qNum == "q2"){
+			return `SELECT 
+    SUM(Votes) SumVotes,
+    Cand_id,
+    CandidateCNIC,
+    Person.fname,
+    Person.lname
+FROM
+    (SELECT 
+        Votes, Cand_id, CandidateCNIC
+    FROM
+        (SELECT 
+        COUNT(v.CNIC) AS Votes, n.Cand_id, n.CNIC AS CandidateCNIC
+    FROM
+        N_Candidate AS n
+    INNER JOIN Votes_Casted_National AS v ON n.Cand_id = v.Cand_id
+    WHERE
+        n.CNIC = 'par' UNION SELECT 
+        COUNT(p.CNIC) AS Votes, p.Cand_id, p.CNIC AS CandidateCNIC
+    FROM
+        P_Candidate AS p
+    INNER JOIN Votes_Casted_Provincial AS pv ON p.Cand_id = pv.Cand_id
+    WHERE
+        p.CNIC = 'par') AS final
+    WHERE
+        Cand_id IS NOT NULL) AS final2
+        INNER JOIN
+    Person ON Person.CNIC = CandidateCNIC`;
+		}
+		else if(qNum == "q3"){
+			return `SELECT 
+    Constituency,
+    CandID,
+    MAX(Count) Count,
+    finaltab2.Year AS Year,
+    finaltab2.CNIC AS CNIC,
+    y.fname AS FName,
+    y.lname AS LName
+FROM
+    (SELECT 
+        Constituency,
+            CandID,
+            MAX(Count) Count,
+            finaltab.Year AS Year,
+            x.CNIC AS CNIC
+    FROM
+        (SELECT 
+        Constituency, CandID, MAX(Count) Count, Year
+    FROM
+        (SELECT 
+        Constituency,
+            VoterCNIC,
+            CandID,
+            Year,
+            COUNT(DISTINCT VoterCNIC) AS Count,
+            Code
+    FROM
+        (SELECT 
+        CONCAT(p.Assembly, ' ', p.Code) AS Constituency,
+            v.Prov_id AS Code,
+            p.City_Div AS City_Division,
+            v.CNIC AS VoterCNIC,
+            v.Cand_id AS CandID,
+            year AS Year
+    FROM
+        Provincial AS p
+    INNER JOIN Votes_Casted_Provincial AS v ON p.Const_id = v.Prov_id
+    WHERE
+        v.year = 'par') AS tab
+    GROUP BY CandID) AS fin
+    GROUP BY Constituency) AS finaltab
+    INNER JOIN P_Candidate AS x ON finaltab.CandID = x.Cand_id
+    GROUP BY Constituency) AS finaltab2
+        INNER JOIN
+    Person AS y ON finaltab2.CNIC = y.CNIC
+GROUP BY Constituency 
+UNION SELECT 
+    Constituency,
+    CandID,
+    MAX(Count) Count,
+    finaltab21.Year AS Year,
+    finaltab21.CNIC AS CNIC,
+    y1.fname AS FName,
+    y1.lname AS LName
+FROM
+    (SELECT 
+        Constituency,
+            CandID,
+            MAX(Count) Count,
+            finaltab1.Year AS Year,
+            x1.CNIC AS CNIC
+    FROM
+        (SELECT 
+        Constituency, CandID, MAX(Count) Count, Year
+    FROM
+        (SELECT 
+        Constituency,
+            VoterCNIC,
+            CandID,
+            Year,
+            COUNT(DISTINCT VoterCNIC) AS Count,
+            Code
+    FROM
+        (SELECT 
+        CONCAT('NA ', q.Code) AS Constituency,
+            w.N_code AS Code,
+            q.City_Div AS City_Division,
+            w.CNIC AS VoterCNIC,
+            w.Cand_id AS CandID,
+            year AS Year
+    FROM
+        National AS q
+    INNER JOIN Votes_Casted_National AS w ON q.Code = w.N_code
+    WHERE
+        w.Year = 'par') AS tab
+    GROUP BY CandID) AS fin1
+    GROUP BY Constituency) AS finaltab1
+    INNER JOIN N_Candidate AS x1 ON finaltab1.CandID = x1.Cand_id
+    GROUP BY Constituency) AS finaltab21
+        INNER JOIN
+    Person AS y1 ON finaltab21.CNIC = y1.CNIC
+GROUP BY Constituency;`;
+		}
+		else if(qNum == "q4"){
+			return `SELECT 
+    SUM(VOTES) AS TotalVotes, year AS Year
+FROM
+    (SELECT 
+        COUNT(DISTINCT CNIC) AS Votes, year
+    FROM
+        Votes_Casted_National
+    WHERE
+        year = 'par' UNION SELECT 
+        COUNT(DISTINCT CNIC) AS Votes, year
+    FROM
+        Votes_Casted_Provincial
+    WHERE
+        year = 'par') AS sumindividual;`;
+		}
+		else if(qNum == "q5"){
+			return `SELECT 
+    SUM(VOTES) AS TotalVotes, Party, Party_id, Year
+FROM
+    (SELECT 
+        COUNT(DISTINCT CNIC) AS Votes,
+            Party,
+            Party_id,
+            vp.year AS Year
+    FROM
+        (SELECT 
+        pc.Cand_id AS CandID, p.pname AS Party, p.Party_id
+    FROM
+        Parties AS p
+    INNER JOIN P_Candidate AS pc ON p.Party_id = pc.Party_id
+    WHERE
+        p.Party_id = 'par0') AS candidates
+    INNER JOIN Votes_Casted_Provincial AS vp ON candidates.CandID = vp.Cand_id
+    WHERE
+        year = 'par1' UNION SELECT 
+        COUNT(DISTINCT CNIC) AS Votes,
+            Party,
+            Party_id,
+            v.year AS Year
+    FROM
+        (SELECT 
+        nc.Cand_id AS CandID, p.pname AS Party, p.Party_id
+    FROM
+        Parties AS p
+    INNER JOIN N_Candidate AS nc ON p.Party_id = nc.Party_id
+    WHERE
+        p.Party_id = 'par0') AS candidates
+    INNER JOIN Votes_Casted_National AS v ON candidates.CandID = v.Cand_id
+    WHERE
+        year = 'par1') AS last;`;
+		}
+		else if(qNum == "q6"){
+			return `SELECT
+  MAX(count) AS Count,
+  ANY_VALUE(Polling_Station) as PollingStation,
+  ANY_VALUE(City_Division) as CityDivision,
+  ANY_VALUE(Code) as ConstituencyCode
+FROM
+  (
+    SELECT
+      a.Prov_id AS Polling_Station,
+      b.City_Div AS City_Division,
+      CONCAT(b.Assembly, ' ', b.Code) AS Code,
+      COUNT(a.Prov_id) AS count
+    FROM
+      Votes_Casted_Provincial AS a
+      INNER JOIN Provincial AS b ON a.Prov_id = b.Const_id
+    GROUP BY
+      a.Prov_id
+    UNION
+    SELECT
+      N_code AS Polling_Station,
+      d.City_Div AS City_Dvision,
+      CONCAT('NA ', d.Code) AS Code,
+      COUNT(N_code) AS count
+    FROM
+      Votes_Casted_National AS c
+      INNER JOIN National AS d ON c.N_code = d.Code
+    GROUP BY
+      N_code
+    ORDER BY
+      count DESC
+  ) AS total_votes;`;
+		}
+		else if(qNum == "q7"){
+			return `SELECT 
+    MIN(Votes) AS Votes,
+    Code,
+    City_Division,
+    Fname,
+    Cand_ID,
+    CNIC
+FROM
+    (SELECT 
+        CONCAT(Prov.Assembly, ' ', Prov.Code) AS Code,
+            Prov.City_Div AS City_Division,
+            sub_que.Fname AS Fname,
+            sub_que.CNIC AS CNIC,
+            sub_que.Cand_id AS Cand_ID,
+            COUNT(sub_que.Cand_id) AS Votes
+    FROM
+        (SELECT 
+        PC.CNIC, PC.Cand_id, PC.Prov_id, P.Fname
+    FROM
+        (SELECT 
+        P.Prov_id, P.Cand_id, PC.CNIC
+    FROM
+        Votes_Casted_Provincial AS P
+    INNER JOIN P_Candidate AS PC ON P.Cand_id = PC.Cand_id) AS PC
+    INNER JOIN Person AS P ON P.CNIC = PC.CNIC) AS sub_que
+    INNER JOIN Provincial AS Prov ON sub_que.Prov_id = Prov.Const_id
+    GROUP BY sub_que.Cand_id UNION SELECT 
+        CONCAT('NA ', Nat.Code) AS Code,
+            Nat.City_Div,
+            sub_que.Fname,
+            sub_que.CNIC AS CNIC,
+            sub_que.Cand_id,
+            COUNT(sub_que.Cand_id) AS count
+    FROM
+        (SELECT 
+        cand_join.CNIC, cand_join.Cand_id, cand_join.N_code, P.Fname
+    FROM
+        (SELECT 
+        N.N_code, N.Cand_id, NC.CNIC
+    FROM
+        Votes_Casted_National AS N
+    INNER JOIN N_Candidate AS NC ON N.Cand_id = NC.Cand_id) AS cand_join
+    INNER JOIN Person AS P ON P.CNIC = cand_join.CNIC) sub_que
+    INNER JOIN National AS Nat ON sub_que.N_code = Nat.Code
+    GROUP BY sub_que.Cand_id) AS finalresult;`;
+		}
+		else if(qNum == "q8"){
+			return `SELECT 
+    VN.CNIC, P.FName, P.Gender, COUNT(VN.CNIC) AS count
+FROM
+    Votes_Casted_National AS VN
+        INNER JOIN
+    Person AS P ON P.CNIC = VN.CNIC
+GROUP BY VN.CNIC 
+UNION SELECT 
+    VP.CNIC, P.FName, P.Gender, COUNT(VP.CNIC) AS count
+FROM
+    Votes_Casted_Provincial AS VP
+        INNER JOIN
+    Person AS P ON P.CNIC = VP.CNIC
+GROUP BY VP.CNIC
+ORDER BY count ASC
+LIMIT 1`;
+		}
+		else if(qNum == "q9"){
+			return `SELECT 
+    V1.*
+FROM
+    (SELECT 
+        P.Fname, sq.CNIC, sq.Year, sq.Cand_id, sq.votes
+    FROM
+        (SELECT 
+        NC.CNIC, V.Year, V.Cand_id, COUNT(V.Cand_id) AS votes
+    FROM
+        Votes_Casted_National V
+    JOIN N_Candidate NC ON V.Cand_id = NC.Cand_id
+    GROUP BY Cand_id) sq
+    JOIN Person P ON P.CNIC = sq.CNIC UNION SELECT 
+        P.Fname, sq.CNIC, sq.Year, sq.Cand_id, sq.votes
+    FROM
+        (SELECT 
+        PC.CNIC, P.Year, P.Cand_id, COUNT(P.Cand_id) AS votes
+    FROM
+        Votes_Casted_Provincial P
+    JOIN P_Candidate PC ON P.Cand_id = PC.Cand_id
+    GROUP BY Cand_id) sq
+    JOIN Person P ON P.CNIC = sq.CNIC) V1
+        LEFT JOIN
+    (SELECT 
+        P.Fname, sq.CNIC, sq.Year, sq.Cand_id, sq.votes
+    FROM
+        (SELECT 
+        NC.CNIC, V.Year, V.Cand_id, COUNT(V.Cand_id) AS votes
+    FROM
+        Votes_Casted_National V
+    JOIN N_Candidate NC ON V.Cand_id = NC.Cand_id
+    GROUP BY Cand_id) sq
+    JOIN Person P ON P.CNIC = sq.CNIC UNION SELECT 
+        P.Fname, sq.CNIC, sq.Year, sq.Cand_id, sq.votes
+    FROM
+        (SELECT 
+        PC.CNIC, P.Year, P.Cand_id, COUNT(P.Cand_id) AS votes
+    FROM
+        Votes_Casted_Provincial P
+    JOIN P_Candidate PC ON P.Cand_id = PC.Cand_id
+    GROUP BY Cand_id) sq
+    JOIN Person P ON P.CNIC = sq.CNIC) V2 ON V1.Year = V2.Year
+        AND V1.votes < V2.votes
+WHERE
+    V2.votes IS NULL`;
+		}
+		else if(qNum == "q10"){
+			return `SELECT 
+    sq3.Fname, P.Pname, sq3.CNIC, sq3.num_apppear
+FROM
+    (SELECT DISTINCT
+        sq2.Fname,
+            sq2.Cand_id,
+            sq2.Year,
+            sq2.Party_id,
+            sq2.CNIC,
+            COUNT(sq2.Fname) AS num_apppear
+    FROM
+        (SELECT 
+        P.Fname, sq.CNIC, sq.Year, sq.Cand_id, sq.Party_id
+    FROM
+        (SELECT 
+        NC.CNIC, V.Year, V.Cand_id, NC.Party_id
+    FROM
+        Votes_Casted_National V
+    JOIN N_Candidate NC ON V.Cand_id = NC.Cand_id) sq
+    JOIN Person P ON P.CNIC = sq.CNIC UNION SELECT 
+        P.Fname, sq.CNIC, sq.Year, sq.Cand_id, sq.Party_id
+    FROM
+        (SELECT 
+        PC.CNIC, P.Year, P.Cand_id, PC.Party_id
+    FROM
+        Votes_Casted_Provincial P
+    JOIN P_Candidate PC ON P.Cand_id = PC.Cand_id) sq
+    JOIN Person P ON P.CNIC = sq.CNIC) sq2
+    GROUP BY sq2.Fname
+    ORDER BY num_apppear DESC
+    LIMIT 1) sq3
+        INNER JOIN
+    Parties P ON P.Party_id = sq3.Party_id`;
+		}
+	}
+	function makeForm(val){
+		var element = document.getElementById(nameprevious);
+		if(element){	
+			if(element.parentNode){
+				    element.parentNode.removeChild(element);
+			}
+		}
+		var attr = tables[val];
+		var f = document.createElement("form");
+        f.id = val
+        f.name = val;
+		f.setAttribute('method',"post");
+		f.setAttribute('action',"/query");// change this according to query execution
+		f.setAttribute('onsubmit', `return validateForm(${val})`)
+
+		br = document.createElement("br")
+		br2 = document.createElement("br")
+		f.appendChild(br);
+		nameprevious = val		
+		if(["q1","q2","q3","q4","q5"].includes(val)){
+			if(val == "q5"){
+				for(var e in attr){
+					var node = document.createTextNode(attr[e] + ":\t" );
+					f.appendChild(node);
+					var i = document.createElement("input");
+					i.type = "text";
+					i.name = 'par'+e;
+					// console.log(i.name);
+					i.id = 'par';
+					f.appendChild(i);
+					f.appendChild(br2);
+				}
+			}
+			else{
+				var node = document.createTextNode(attr + ":\t" );
+				f.appendChild(node);
+				var i = document.createElement("input");
+				i.type = "text";
+				i.name = 'par';
+				i.id = 'par';
+				f.appendChild(i);
+				f.appendChild(br2);
+			}
+			// nameprevious = val
+			var s = document.createElement("input");
+			s.type = "submit";
+			s.value = "Submit";
+			f.appendChild(s);
+			document.getElementsByTagName('body')[0].appendChild(f); 
+			var query = document.createElement("input");
+			query.type = "hidden";
+			query.name = "query";
+			query.id = 'query';
+			let parameter = document.getElementById('par').value;
+			query.value = getQuery(val);
+			// console.log(query.value);
+			document.getElementById(val).appendChild(query);
+		}
+		else{
+			var s = document.createElement("input");
+			s.type = "submit";
+			s.value = "Submit";
+			f.appendChild(s);
+			var query = document.createElement("input");
+			query.type = "hidden";
+			query.name = "query";
+			query.id = 'query';
+			query.value = getQuery(val);
+			f.appendChild(query);
+			document.getElementsByTagName('body')[0].appendChild(f);
+		}
+		
+		// f.appendChild(query);
+	}
+
+</script>
+<body>
+	<!-- <h1>Custom Queries</h1>
+	<select onchange="submited(this.selectedIndex)">
+		<option value="default">Please Select Query</option>
+		<option value="q1" >Given a year, which political party won the highest number of votes?</option>
+		<option value="q2" >For a particular candidate, how many votes has he received over the years?</option>
+		<option value="q3" >For a specific year, which candidate won from each polling station?</option>
+		<option value="q4" >Given a specific election year, how many votes were cast in total?</option>
+		<option value="q5" >For a particular party, how many votes did they receive in a given year?</option>
+		<option value="q6" >Which polling station received the highest number of total votes over the years?</option>
+		<option value="q7" >Which candidate received the least number of votes over the years and which seat did he stand up for?</option>
+		<option value="q8" >Which citizen has voted the least number of times over the years?</option>
+		<option value="q9" >For each election, what is the highest number of votes received and which candidate received them?</option>
+		<option value="q10" >Which candidate has stood up the most number of times for election and which political parties did he stand up from?</option>
+	</select> -->
+
+    <div class="container">
+			<div class="row">
+				<div class="col-sm-1">
+					<button class="btn-lg btn-round" onclick="window.location.href = '../home.html'">Back</button>
+				</div>
+				<div class="col-sm-11"></div>
+			</div>
+			<div class="row">
+				<div class="col-md-4"></div>				
+				<div class="col-md-4">
+					<h1 style="margin-left:10%">Data Extraction</h1>
+					<h3 style="margin-left:18%">Select a query to run</h3>
+				</div>
+				<div class="col-md-4"></div>				
+			</div>
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+                    <div class="col-md-12">
+                        <a onclick="submited(1)" class="tile purple">
+                        <h3 class="title">Given a year, which political party won the highest number of votes?</h3>
+                        </a>
+                    </div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+                    <div class="col-md-12">
+                        <a onclick="submited(2)" class="tile blue">
+                        <h3 class="title">For a particular candidate, how many votes has he received over the years?</h3>
+                        </a>
+                    </div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+                    <div class="col-md-12">
+                        <a onclick="submited(3)" class="tile red">
+                        <h3 class="title">For a specific year, which candidate won from each polling station?</h3>
+                        </a>
+                    </div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+                    <div class="col-md-12">
+                        <a onclick="submited(4)" class="tile purple">
+                        <h3 class="title">Given a specific election year, how many votes were cast in total?</h3>
+                        </a>
+                    </div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+                    <div class="col-md-12">
+                        <a onclick="submited(5)" class="tile blue">
+                        <h3 class="title">For a particular party, how many votes did they receive in a given year?</h3>
+                        </a>
+                    </div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+                    <div class="col-md-12">
+                        <a onclick="submited(6)" class="tile red">
+                        <h3 class="title">Which polling station received the highest number of total votes over the years?</h3>
+                        </a>
+                    </div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+                    <div class="col-md-12">
+                        <a onclick="submited(7)" class="tile purple">
+                        <h3 class="title">Which candidate received the least number of votes over the years and which seat did he stand up for?</h3>
+                        </a>
+                    </div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+                    <div class="col-md-12">
+                        <a onclick="submited(8)" class="tile blue">
+                        <h3 class="title">Which citizen has voted the least number of times over the years?</h3>
+                        </a>
+                    </div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+                    <div class="col-md-12">
+                        <a onclick="submited(9)" class="tile red">
+                        <h3 class="title">For each election, what is the highest number of votes received and which candidate received them?</h3>
+                        </a>
+                    </div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+                    <div class="col-md-12">
+                        <a onclick="submited(10)" class="tile purple">
+                        <h3 class="title">Which candidate has stood up the most number of times for election and which political parties did he stand up from?</h3>
+                        </a>
+                    </div>
+				</div>
+				<div class="col-md-1"></div>
+			</div>
+    </div>
+</body>
+</html>

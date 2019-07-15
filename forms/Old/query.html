@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<script type="text/javascript">
+
+	const tables = {
+		'q1' : 'Year',
+		'q2' : 'CNIC',
+		'q3' : 'Year',
+		'q4' : 'Year',
+		'q5' : 'Party_id',
+	}
+
+	nameprevious = ''
+	function submited(val){
+		// console.log(val)
+		
+		if(val == 1) makeForm("q1")
+		else if(val == 2) makeForm("q2")
+		else if(val == 3) makeForm("q3")
+ 		else if(val == 4) makeForm("q4")
+ 		else if(val == 5) makeForm("q5")
+ 		else if(val == 6) makeForm("q6")
+ 		else if(val == 7) makeForm("q7")
+ 		else if(val == 8) makeForm("q8")
+ 		else if(val == 9) makeForm("q9")
+ 		else if(val == 10) makeForm("q10")
+	}
+
+	function queryImplement(val){
+		var element = document.getElementById(nameprevious);
+		if(element){	
+			if(element.parentNode){
+				    element.parentNode.removeChild(element);
+			}
+		}
+		console.log("Implementing query " + val)
+	}
+
+	function validateForm(val){
+		myval = val.value
+		if(myval == "q1"){
+			var l4v = document.forms[myval]["Year"].value;
+	    	if(l4v == "" || l4v.length != 4 || isNaN(l4v)){
+		        alert("Error in Year");
+		        return false;
+	    	}
+		}else if(myval == "q2"){
+			var vvvv2 = document.forms[myval]["CNIC"].value;
+		    if (vvvv2 == "" || vvvv2.length != 13 || isNaN(vvvv2)) {
+		        alert("Error in CNIC");
+		        return false;
+		    }
+		}else if(myval == "q3"){
+			var l4v = document.forms[myval]["Year"].value;
+	    	if(l4v == "" || l4v.length != 4 || isNaN(l4v)){
+		        alert("Error in Year");
+		        return false;
+	    	}
+		}else if(myval == "q4"){
+			var l4v = document.forms[myval]["Year"].value;
+	    	if(l4v == "" || l4v.length != 4 || isNaN(l4v)){
+		        alert("Error in Year");
+		        return false;
+	    	}
+		}else if(myval == "q5"){
+			var ae5 = document.forms[myval]["Party_id"].value;
+	    	if(ae5 == "" || ae5.length <= 11 || isNaN(ae5)){
+		        alert("Error in Party_id");
+		        return false;
+	    	}
+		}
+		else{
+			return true;
+		}
+	}
+	function getQuery(qNum){
+		if(qNum == "q1"){
+			return "1";
+		}
+		else if(qNum == "q2"){
+			return "2";
+		}
+		else if(qNum == "q3"){
+			return "3";
+		}
+		else if(qNum == "q4"){
+			return "4";
+		}
+		else if(qNum == "q5"){
+			return "5";
+		}
+		else if(qNum == "q6"){
+			return "6";
+		}
+		else if(qNum == "q7"){
+			return "7";
+		}
+		else if(qNum == "q8"){
+			return "8";
+		}
+		else if(qNum == "q9"){
+			return "9";
+		}
+		else if(qNum == "q10"){
+			return "10";
+		}
+	}
+	function makeForm(val){
+		var element = document.getElementById(nameprevious);
+		if(element){	
+			if(element.parentNode){
+				    element.parentNode.removeChild(element);
+			}
+		}
+		var attr = tables[val];
+		var f = document.createElement("form");
+		f.id = val
+		f.setAttribute('method',"post");
+		f.setAttribute('action',"/query");// change this according to query execution
+		f.setAttribute('onsubmit', "return validateForm("+val+")")
+
+		br = document.createElement("br")
+		br2 = document.createElement("br")
+		f.appendChild(br);
+		nameprevious = val		
+		if(["q1","q2","q3","q4","q5"].includes(val)){
+			var node = document.createTextNode(attr + ":\t" );
+			f.appendChild(node);
+			var i = document.createElement("input");
+			i.type = "text";
+			i.name = 'par';
+			i.id = 'par';
+			f.appendChild(i);
+			f.appendChild(br2);
+			// nameprevious = val
+			var s = document.createElement("input");
+			s.type = "submit";
+			s.value = "Submit";
+			f.appendChild(s);
+			document.getElementsByTagName('body')[0].appendChild(f); 
+			var query = document.createElement("input");
+			query.type = "hidden";
+			query.name = "query";
+			query.id = 'query';
+			let parameter = document.getElementById('par').value;
+			query.value = getQuery(val);
+			document.getElementById(val).appendChild(query);
+		}
+		else{
+			var s = document.createElement("input");
+			s.type = "submit";
+			s.value = "Submit";
+			f.appendChild(s);
+			var query = document.createElement("input");
+			query.type = "hidden";
+			query.name = "query";
+			query.id = 'query';
+			query.value = getQuery(val);
+			f.appendChild(query);
+			document.getElementsByTagName('body')[0].appendChild(f);
+		}
+		
+		// f.appendChild(query);
+	}
+
+</script>
+<body>
+	<h1>Custom Queries</h1>
+	<select onchange="submited(this.selectedIndex)">
+		<option value="default">Please Select Query</option>
+		<option value="q1" >Given a year, which political party won the highest number of votes?</option>
+		<option value="q2" >For a particular candidate, how many votes has he received over the years?</option>
+		<option value="q3" >For a specific year, which candidate won from each polling station?</option>
+		<option value="q4" >Given a specific election year, how many votes were cast in total?</option>
+		<option value="q5" >For a particular party, how many votes did they receive in a given year?</option>
+		<option value="q6" >Which polling station received the highest number of total votes over the years?</option>
+		<option value="q7" >Which candidate received the least number of votes over the years and which seat did he stand up for?</option>
+		<option value="q8" >Which citizen has voted the least number of times over the years?</option>
+		<option value="q9" >For each election, what is the highest number of votes received and which candidate received them?</option>
+		<option value="q10" >Which candidate has stood up the most number of times for election and which political parties did he stand up from?</option>
+	</select>
+
+</body>
+</html>

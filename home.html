@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<style type="text/css">
+    select {
+        width: 310px;
+        height: 100px;
+        margin: 10px;
+        font-size: 30px;
+    }
+    select:focus {
+        min-width: 150px;
+        width: auto;
+    }    
+</style>
+
+<script type="text/javascript">
+	function submited(val){
+		console.log(val)
+		if(val == 1) openInsert()
+		else if(val == 2) openDelete()
+		else if(val == 3) openUpdate()
+ 		else if(val == 4) openQuery()
+	}
+	function openInsert(){
+		window.location.href = './insert.html'
+	}
+	function openDelete(){
+		window.location.href = './delete.html'
+	}
+	function openUpdate(){
+		window.location.href = './update.html'
+	}
+	function openQuery(){
+		window.location.href = './query.html'
+	}
+</script>
+<body>
+
+
+<select onchange="submited(this.selectedIndex)">
+	<option value="default">Please Select Option</option>
+	<option value="insert" >Insert</option>
+	<option value="delete" >Delete</option>
+	<option value="update" >Update</option>
+	<option value="read" >Custom Queries</option>
+</select>
+
+<!-- <div style="background-color: lightblue;" id="ins">
+<form class="form" action="con-cand-votes.php" method="POST">
+
+	
+	<div><input type="text" name="Table_Name" id="tbnm_id"></div>
+	Vote Count
+	<div><input type="text" name="Vote_Count" required id="vcount"></div>
+	<button onclick="submited()">Submit</button>
+
+</form> -->
+</div>
+</body>
+</html>

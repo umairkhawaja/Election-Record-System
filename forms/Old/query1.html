@@ -1,0 +1,22 @@
+<html>
+    <body>
+        <script>
+            var f = document.createElement("form");
+            f.setAttribute('method',"post");
+            f.setAttribute('action',"/query");
+            // f.setAttribute('onsubmit', "return validateForm("+tableName+")")
+            
+            var x = document.createElement("input");
+            x.type = "text";
+            x.name = "query";
+            f.appendChild(x);
+
+            var s = document.createElement("input");
+            s.type = "submit";
+            s.value = "Submit";
+            f.appendChild(s);
+            document.getElementsByTagName('body')[0].appendChild(f); 
+        </script>
+    </body>
+</html>
+
